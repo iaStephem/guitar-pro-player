@@ -1,0 +1,104 @@
+:root {
+  --bg: #f5f7f7;
+  --panel: #ffffff;
+  --panel-soft: #eef2f2;
+  --text: #161819;
+  --muted: #687174;
+  --line: #d8dedf;
+  --accent: #0f766e;
+  --accent-strong: #0b5f59;
+  --danger: #b42318;
+  --mixer: #262935;
+  --mixer-raised: #343847;
+  --mixer-line: #52586a;
+  --mixer-text: #f4f5f8;
+  --mixer-muted: #adb3c2;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button, input, select { font: inherit; }
+button, .fileButton { border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--text); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 0 12px; cursor: pointer; }
+button:hover:not(:disabled), .fileButton:hover { border-color: var(--accent); }
+button:disabled { color: #9aa2a5; cursor: not-allowed; }
+
+.shell { height: 100vh; min-height: 640px; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 24px; border-bottom: 1px solid var(--line); background: var(--panel); }
+h1, h2, p { margin: 0; }
+h1 { font-size: 24px; line-height: 1.2; font-weight: 700; }
+h2 { font-size: 15px; line-height: 1.3; font-weight: 700; }
+.topbar p { color: var(--muted); margin-top: 4px; font-size: 14px; }
+.fileButton, .primaryButton { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; white-space: nowrap; }
+.fileButton input { display: none; }
+.fileButton span { font-size: 20px; line-height: 1; }
+.primaryButton:hover:not(:disabled), .fileButton:hover { background: var(--accent-strong); }
+.primaryButton:disabled { background: #d8dedf; border-color: #d8dedf; }
+
+.controls { display: flex; align-items: center; gap: 10px; padding: 10px 24px; background: var(--panel-soft); border-bottom: 1px solid var(--line); }
+.progressWrap { flex: 1; display: grid; grid-template-columns: 44px minmax(120px, 1fr) 44px; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; }
+input[type='range'] { accent-color: var(--accent); }
+.tempoControl { display: grid; grid-template-columns: auto 96px 44px; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+.soundLibraryControl { display: grid; grid-template-columns: auto minmax(140px, 180px); align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+.soundLibraryControl select, .instrumentSelect { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: var(--text); min-height: 30px; padding: 0 7px; }
+.soundfontButton { min-height: 32px; padding: 0 10px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.soundfontButton input { display: none; }
+
+.workspace { flex: 1; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr) minmax(210px, 27vh); }
+.scorePanel { min-width: 0; overflow: auto; background: #fbfbfa; }
+.status { position: sticky; top: 0; z-index: 2; padding: 10px 18px; background: rgba(255, 255, 255, 0.94); border-bottom: 1px solid var(--line); color: var(--muted); font-size: 13px; backdrop-filter: blur(8px); }
+.status.error { color: var(--danger); }
+.notation { min-height: calc(100vh - 360px); padding: 28px 30px 60px; }
+.emptyNotation { color: var(--muted); padding: 30px 0; }
+.at-cursor-bar { background: rgba(15, 118, 110, 0.22); }
+.at-selection div { background: rgba(15, 118, 110, 0.12); }
+.at-highlight * { fill: var(--accent); stroke: var(--accent); }
+
+.tracksPanel { min-width: 0; overflow: auto; background: var(--mixer); color: var(--mixer-text); border-top: 1px solid #151720; }
+.tracksPanelHeader { height: 38px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-bottom: 1px solid var(--mixer-line); background: #303442; }
+.tracksPanelHeader h2 { font-size: 14px; }
+.panelButton { min-height: 26px; padding: 0 9px; margin-left: auto; color: var(--mixer-text); background: #454b5c; border-color: #646b7e; font-size: 12px; }
+.tracksEmpty { color: var(--mixer-muted); font-size: 14px; padding: 16px; }
+.mixerHeader, .trackItem { min-width: 1080px; display: grid; grid-template-columns: 44px minmax(155px, 1.05fr) minmax(150px, .85fr) 36px 36px minmax(148px, .8fr) minmax(120px, .65fr) minmax(320px, 2.4fr); align-items: center; column-gap: 8px; padding: 0 14px; }
+.mixerHeader { height: 27px; color: var(--mixer-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid #454b5a; }
+.mixerHeader span:nth-child(1), .mixerHeader span:nth-child(4), .mixerHeader span:nth-child(5) { text-align: center; }
+.trackItem { min-height: 43px; border-bottom: 1px solid #3b4050; background: var(--mixer); }
+.trackItem:hover { background: #2f3341; }
+.trackItem > input { justify-self: center; width: 17px; height: 17px; margin: 0; cursor: pointer; accent-color: var(--track-color); }
+.trackName { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 650; }
+.instrumentSelect { border-color: #60687a; background: #343947; color: var(--mixer-text); font-size: 12px; }
+.trackModeButton { justify-self: center; width: 27px; min-height: 27px; padding: 0; border-radius: 4px; color: var(--mixer-text); background: transparent; border-color: transparent; font-size: 12px; font-weight: 800; }
+.trackModeButton:hover { background: #464c5d; border-color: #656d81; }
+.trackModeButton.isActive { background: #d8f0ec; border-color: #70c7ba; color: #075e55; }
+.trackModeButton.isMuted { background: #f0a53b; border-color: #ffc86c; color: #362408; }
+.mixerControl { display: grid; grid-template-columns: minmax(60px, 1fr) 38px; align-items: center; gap: 7px; color: var(--mixer-muted); font-size: 11px; }
+.mixerControl input { width: 100%; min-width: 0; accent-color: var(--track-color); }
+.mixerControl output { text-align: right; font-variant-numeric: tabular-nums; }
+.trackTimeline { align-self: stretch; min-width: 0; display: grid; grid-template-columns: repeat(var(--measure-count), minmax(11px, 1fr)); gap: 0; padding-top: 14px; overflow: hidden; cursor: pointer; }
+.measureCell { appearance: none; position: relative; z-index: 1; min-width: 0; width: 100%; height: 24px; min-height: 24px; padding: 0; border: 0; border-left: 1px solid rgba(18, 22, 30, .56); border-radius: 0; background: var(--track-color); opacity: .92; cursor: pointer; pointer-events: auto; touch-action: manipulation; user-select: none; }
+.measureCell:hover { border-color: rgba(255, 255, 255, .7); opacity: 1; filter: brightness(1.12); }
+.measureCell.isSelected { z-index: 1; opacity: 1; box-shadow: inset 0 0 0 2px #fff; }
+.measureCell:nth-child(8n + 1) { opacity: .55; }
+.measureCell[data-marker]::before { content: attr(data-marker); position: absolute; top: -14px; left: 3px; color: var(--mixer-muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+.masterMixRow { min-width: 430px; height: 40px; display: grid; grid-template-columns: minmax(170px, 1fr) minmax(180px, 300px) 42px; align-items: center; gap: 12px; padding: 0 14px; background: #1f222d; color: var(--mixer-text); }
+.masterMixRow strong { font-size: 13px; }
+.masterMixRow input { width: 100%; accent-color: #a8d585; }
+.masterMixRow output { color: var(--mixer-muted); text-align: right; font-size: 12px; }
+
+@media (max-width: 760px) {
+  .shell { height: auto; min-height: 100vh; overflow: auto; }
+  .topbar, .controls { padding-left: 14px; padding-right: 14px; }
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .controls { flex-wrap: wrap; }
+  .progressWrap { order: 3; flex-basis: 100%; }
+  .tempoControl { grid-template-columns: auto minmax(90px, 1fr) 44px; flex: 1; }
+  .soundLibraryControl { grid-template-columns: auto minmax(140px, 1fr); flex: 1 1 100%; }
+  .workspace { display: flex; flex-direction: column; }
+  .scorePanel { min-height: 52vh; }
+  .tracksPanel { max-height: 330px; }
+  .notation { min-height: 52vh; padding: 18px 14px 48px; }
+}

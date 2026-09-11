@@ -53,6 +53,7 @@ document.querySelector('#app').innerHTML = `
     <section class="workspace">
       <section class="scorePanel">
         <div id="status" class="status">Готов к открытию файлов GP3, GP4, GP5, GPX/GP6 и GP/GP7.</div>
+        <div id="emptyNotation" class="emptyNotation" hidden>Выберите хотя бы одну дорожку, чтобы увидеть ноты.</div>
         <div id="alphaTab" class="notation"></div>
       </section>
       <aside class="tracksPanel">
@@ -80,6 +81,7 @@ const tracks = document.querySelector('#tracks');
 const speed = document.querySelector('#speed');
 const speedValue = document.querySelector('#speedValue');
 const scoreElement = document.querySelector('#alphaTab');
+const emptyNotation = document.querySelector('#emptyNotation');
 const showAllButton = document.querySelector('#showAllButton');
 const soundLibrary = document.querySelector('#soundLibrary');
 const soundfontInput = document.querySelector('#soundfontInput');
@@ -94,6 +96,7 @@ const trackState = new Map();
 let importedTrackNames = [];
 let selectedMeasure = null;
 let pendingSeekTick = null;
+let playerEndTick = 0;
 const assetBase = window.location.protocol === 'file:' ? './' : '/';
 const soundLibraries = {
   musescore: {
@@ -130,6 +133,7 @@ const api = new alphaTab.AlphaTabApi(scoreElement, {
   player: {
     enablePlayer: true,
     enableCursor: true,
+    enableElementHighlighting: false,
     enableUserInteraction: true,
     soundFont: soundLibraries.musescore.source,
     scrollElement: '.scorePanel',
@@ -189,6 +193,7 @@ stopButton.addEventListener('click', () => {
   api.stop();
   progress.value = '0';
   currentTime.textContent = '0:00';
+  updateTimelinePlayheads(0, playerEndTick);
 });
 
 progress.addEventListener('input', () => {
@@ -284,12 +289,14 @@ api.soundFontLoaded.on(() => {
 
 api.midiLoaded.on((args) => {
   hasMidi = true;
+  playerEndTick = args.endTick;
   setPlayerEnabled(true);
   progress.max = String(args.endTick);
   totalTime.textContent = formatTime(args.endTime);
   requestAnimationFrame(() => {
     applyTrackPlaybackState();
     applyPendingSeek();
+    updateTimelinePlayheads(api.tickPosition || 0, playerEndTick);
   });
 });
 
@@ -297,6 +304,7 @@ api.playerPositionChanged.on((args) => {
   if (!isSeeking) progress.value = String(args.currentTick);
   currentTime.textContent = formatTime(args.currentTime);
   totalTime.textContent = formatTime(args.endTime);
+  updateTimelinePlayheads(args.currentTick, args.endTick || playerEndTick);
 });
 
 api.playerStateChanged.on((args) => {
@@ -487,6 +495,8 @@ function createTrackTimeline(score, trackIndex) {
   const measureCount = score.masterBars?.length || 1;
   timeline.className = 'trackTimeline';
   timeline.style.setProperty('--measure-count', String(measureCount));
+  timeline.style.setProperty('--playhead-position', getPlaybackPositionPercent());
+  timeline.classList.toggle('hasPlayhead', hasMidi);
   timeline.title = `Дорожка ${trackIndex + 1}: ${score.masterBars?.length || 0} тактов`;
 
   for (let measure = 0; measure < measureCount; measure += 1) {
@@ -531,6 +541,7 @@ function seekToTick(tick) {
   const targetTick = Math.max(0, Math.round(tick || 0));
   api.tickPosition = targetTick;
   progress.value = String(targetTick);
+  updateTimelinePlayheads(targetTick, playerEndTick);
   pendingSeekTick = null;
 }
 
@@ -626,8 +637,24 @@ function renderNotation() {
   const score = getActiveScore();
   if (!score) return;
   const selectedTracks = score.tracks.filter((track) => visibleTrackIndexes.includes(track.index));
-  if (selectedTracks.length) api.renderTracks(selectedTracks);
-  else scoreElement.innerHTML = '<div class="emptyNotation">Выберите хотя бы одну дорожку, чтобы увидеть ноты.</div>';
+  const hasVisibleTracks = selectedTracks.length > 0;
+  emptyNotation.hidden = hasVisibleTracks;
+  scoreElement.hidden = !hasVisibleTracks;
+  if (hasVisibleTracks) api.renderTracks(selectedTracks);
+}
+
+function updateTimelinePlayheads(currentTick, endTick) {
+  if (endTick > 0) playerEndTick = endTick;
+  const position = getPlaybackPositionPercent(currentTick);
+  document.querySelectorAll('.trackTimeline').forEach((timeline) => {
+    timeline.style.setProperty('--playhead-position', position);
+    timeline.classList.toggle('hasPlayhead', hasMidi);
+  });
+}
+
+function getPlaybackPositionPercent(currentTick = Number(progress.value)) {
+  const ratio = playerEndTick > 0 ? Math.min(1, Math.max(0, currentTick / playerEndTick)) : 0;
+  return `${ratio * 100}%`;
 }
 
 function setTrackMute(track, mute) {

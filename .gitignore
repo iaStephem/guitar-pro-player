@@ -16,6 +16,7 @@ release-app/
 release-final/
 release-latest/
 *.local
+playhead-test.png
 
 # Editor directories and files
 .vscode/*

@@ -1,6 +1,6 @@
 {
   "name": "guitar-pro-player",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "private": true,
   "type": "module",
   "main": "electron/main.cjs",
@@ -16,7 +16,7 @@
     "productName": "Guitar Pro Player",
     "electronDist": "node_modules/electron/dist",
     "directories": {
-      "output": "release-1.0.2"
+      "output": "release-1.0.4"
     },
     "files": [
       "dist/**/*",

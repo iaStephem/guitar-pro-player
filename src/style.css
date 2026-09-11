@@ -53,10 +53,11 @@ input[type='range'] { accent-color: var(--accent); }
 .status { position: sticky; top: 0; z-index: 2; padding: 10px 18px; background: rgba(255, 255, 255, 0.94); border-bottom: 1px solid var(--line); color: var(--muted); font-size: 13px; backdrop-filter: blur(8px); }
 .status.error { color: var(--danger); }
 .notation { min-height: calc(100vh - 360px); padding: 28px 30px 60px; }
-.emptyNotation { color: var(--muted); padding: 30px 0; }
-.at-cursor-bar { background: rgba(15, 118, 110, 0.22); }
-.at-selection div { background: rgba(15, 118, 110, 0.12); }
-.at-highlight * { fill: var(--accent); stroke: var(--accent); }
+.emptyNotation { color: var(--muted); padding: 58px 30px; }
+.at-cursor-bar { background: transparent; }
+.at-cursor-beat { width: 2px; background: var(--accent); box-shadow: 0 0 0 1px rgba(255, 255, 255, .7); }
+.at-selection div { background: transparent; }
+.at-highlight * { fill: inherit; stroke: inherit; }
 
 .tracksPanel { min-width: 0; overflow: auto; background: var(--mixer); color: var(--mixer-text); border-top: 1px solid #151720; }
 .tracksPanelHeader { height: 38px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-bottom: 1px solid var(--mixer-line); background: #303442; }
@@ -78,7 +79,9 @@ input[type='range'] { accent-color: var(--accent); }
 .mixerControl { display: grid; grid-template-columns: minmax(60px, 1fr) 38px; align-items: center; gap: 7px; color: var(--mixer-muted); font-size: 11px; }
 .mixerControl input { width: 100%; min-width: 0; accent-color: var(--track-color); }
 .mixerControl output { text-align: right; font-variant-numeric: tabular-nums; }
-.trackTimeline { align-self: stretch; min-width: 0; display: grid; grid-template-columns: repeat(var(--measure-count), minmax(11px, 1fr)); gap: 0; padding-top: 14px; overflow: hidden; cursor: pointer; }
+.trackTimeline { position: relative; align-self: stretch; min-width: 0; display: grid; grid-template-columns: repeat(var(--measure-count), minmax(11px, 1fr)); gap: 0; padding-top: 14px; overflow: hidden; cursor: pointer; }
+.trackTimeline::after { content: ''; position: absolute; z-index: 4; top: 14px; bottom: 5px; left: var(--playhead-position, 0%); width: 2px; background: #fff; box-shadow: 0 0 0 1px rgba(15, 118, 110, .82); opacity: 0; pointer-events: none; transform: translateX(-1px); }
+.trackTimeline.hasPlayhead::after { opacity: 1; }
 .measureCell { appearance: none; position: relative; z-index: 1; min-width: 0; width: 100%; height: 24px; min-height: 24px; padding: 0; border: 0; border-left: 1px solid rgba(18, 22, 30, .56); border-radius: 0; background: var(--track-color); opacity: .92; cursor: pointer; pointer-events: auto; touch-action: manipulation; user-select: none; }
 .measureCell:hover { border-color: rgba(255, 255, 255, .7); opacity: 1; filter: brightness(1.12); }
 .measureCell.isSelected { z-index: 1; opacity: 1; box-shadow: inset 0 0 0 2px #fff; }
